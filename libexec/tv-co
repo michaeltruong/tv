@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
-set -e
 
-who
+# Usage: tv co newbranch 
+# Summary: Check out new branch and fix config.xml
+# Help: This will print out when you run `sub help who`.
+# You can have multiple lines even!
+#
+#   tv co test
+#
+# And maybe start off another one?get current branch
+branch_name="$(git symbolic-ref HEAD 2>/dev/null)" || branch_name="(unnamed branch)"     # detached HEAD
+branch_name=${branch_name##refs/heads/}
+
+#checkout current branch
+git checkout -b $1 $branch_name
+
+find config.xml -print0 | xargs -0 sed -i '' -e "s/\<widgetname\>.*\<\/widgetname\>/\<widgetname\>$1\<\/widgetname\>/g"
+
